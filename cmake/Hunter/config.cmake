@@ -23,3 +23,8 @@ hunter_config(ethash VERSION 0.4.0
     URL https://github.com/chfast/ethash/archive/v0.4.0.tar.gz
     SHA1 fd92ffadff2931877a3b68685dd8c53f0bdec539
 )
+
+hunter_config(leveldb VERSION 1.20-post.7035af
+    URL https://github.com/google/leveldb/archive/7035af5fc36657447054617759854a726d31dbe0.tar.gz
+    SHA1 4130b031b0cd9d53d543720e48865b454a577fc5
+)

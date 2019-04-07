@@ -43,6 +43,8 @@ static_assert(BOOST_VERSION >= 106400, "Wrong boost headers version");
 
 namespace
 {
+std::chrono::steady_clock::duration c_syncTimeoutThreshold{std::chrono::minutes{60}};
+
 std::string filtersToString(h256Hash const& _fs)
 {
     std::stringstream str;
@@ -82,7 +84,8 @@ Client::Client(ChainParams const& _params, int _networkID, p2p::Host& _host,
     m_gp(_gpForAdoption ? _gpForAdoption : make_shared<TrivialGasPricer>()),
     m_preSeal(chainParams().accountStartNonce),
     m_postSeal(chainParams().accountStartNonce),
-    m_working(chainParams().accountStartNonce)
+    m_working(chainParams().accountStartNonce),
+    m_lastBqSyncTime{std::chrono::steady_clock::time_point::min()}
 {
     init(_host, _dbPath, _snapshotPath, _forceAction, _networkID);
 }
@@ -393,6 +396,11 @@ void Client::syncBlockQueue()
 
     if (count)
     {
+        DEV_WRITE_GUARDED(x_lastBqSyncTime)
+        {
+            m_lastBqSyncTime = std::chrono::steady_clock::now();
+        }
+
         LOG(m_logger) << count << " blocks imported in " << unsigned(elapsed * 1000) << " ms ("
                       << (count / elapsed) << " blocks/s) in #" << bc().number();
     }
@@ -675,6 +683,30 @@ void Client::noteChanged(h256Hash const& _filters)
 
 void Client::doWork(bool _doWait)
 {
+    std::chrono::steady_clock::duration timeSinceLastSync{
+        std::chrono::steady_clock::duration::min() };
+    DEV_READ_GUARDED(x_lastBqSyncTime)
+    {
+        if (m_lastBqSyncTime > std::chrono::steady_clock::time_point::min())
+            timeSinceLastSync = std::chrono::steady_clock::now() - m_lastBqSyncTime;
+    }
+
+    if (timeSinceLastSync > c_syncTimeoutThreshold)
+    {
+        cwarn << "Block queue sync timeout occurred! Time since last block queue sync: "
+            << std::chrono::duration_cast<std::chrono::minutes>(timeSinceLastSync).count()
+            << " minutes";
+
+        // Force a debugger break
+        int* debugBreak = nullptr;
+        *debugBreak = 0;
+    }
+    else
+    {
+        if (timeSinceLastSync > std::chrono::steady_clock::duration::min())
+            LOG(m_logger) << "Time since last block queue sync: " << std::chrono::duration_cast<std::chrono::seconds>(timeSinceLastSync).count() << " seconds";
+    }
+
     bool t = true;
     if (m_syncBlockQueue.compare_exchange_strong(t, false))
         syncBlockQueue();

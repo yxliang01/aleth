@@ -350,6 +350,10 @@ protected:
     std::atomic<bool> m_needStateReset = { false };         ///< Need reset working state to premin on next sync
     std::chrono::system_clock::time_point m_lastGetWork;    ///< Is there an active and valid remote worker?
 
+    mutable SharedMutex x_lastBqSyncTime;                    ///< Lock for m_lastBqSyncTime
+    std::chrono::steady_clock::time_point m_lastBqSyncTime;  ///< Time when the block queue was last
+                                                             ///< sync'd
+
     std::weak_ptr<EthereumCapability> m_host;
     std::weak_ptr<WarpCapability> m_warpHost;
 

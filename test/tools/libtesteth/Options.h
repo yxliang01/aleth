@@ -48,6 +48,7 @@ public:
     bool createRandomTest = false; ///< Generate random test
     boost::optional<uint64_t> randomTestSeed; ///< Define a seed for random test
     bool jsontrace = false; ///< Vmtrace to stdout in json format
+	bool dismissGasCost = false; ///< Whether dismiss the effect of gas cost
     eth::StandardTrace::DebugOptions jsontraceOptions; ///< output config for jsontrace
     std::string testpath;	///< Custom test folder path
     boost::optional<boost::filesystem::path> randomCodeOptionsPath; ///< Options for random code generation in fuzz tests

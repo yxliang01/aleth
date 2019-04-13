@@ -334,7 +334,7 @@ Options::Options(int argc, const char** argv)
             u256 input = toU256(argv[++i]);
             if (input > std::numeric_limits<uint64_t>::max())
                 BOOST_WARN("Seed is > u64. Using u64_max instead.");
-            randomTestSeefstatic_cast<uint64_t>(min<u256>(std::numeric_limits<uint64_t>::max(), input));
+			randomTestSeed = static_cast<uint64_t>(min<u256>(std::numeric_limits<uint64_t>::max(), input));
         }
         else if (arg == "--db")
         {

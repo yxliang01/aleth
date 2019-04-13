@@ -70,11 +70,14 @@ void printHelp()
     cout << setw(30) << "--createRandomTest" << setw(25) << "Create random test and output it to the console\n";
     cout << setw(30) << "--createRandomTest <PathToOptions.json>" << setw(25) << "Use following options file for random code generation\n";
     cout << setw(30) << "--seed <uint>" << setw(25) << "Define a seed for random test\n";
+	
+	cout << "\nOther Options\n";
     cout << setw(30) << "--options <PathTo.json>" << setw(25) << "Use following options file for random code generation\n";
     //cout << setw(30) << "--fulloutput" << setw(25) << "Disable address compression in the output field\n";
     cout << setw(30) << "--db <name> (=memorydb)" << setw(25) << "Use the supplied database for the block and state databases. Valid options: leveldb, rocksdb, memorydb\n";
     cout << setw(30) << "--help" << setw(25) << "Display list of command arguments\n";
     cout << setw(30) << "--version" << setw(25) << "Display build information\n";
+	cout << setw(30) << "--dismissGasCost" << setw(25) << "Dismiss the effect of gas cost\n";
 }
 
 void printVersion()
@@ -127,6 +130,7 @@ Options::Options(int argc, const char** argv)
     trDataIndex = -1;
     trGasIndex = -1;
     trValueIndex = -1;
+	
     bool seenSeparator = false; // true if "--" has been seen.
     setDatabaseKind(DatabaseKind::MemoryDB); // default to MemoryDB in the interest of reduced test execution time
     for (auto i = 0; i < argc; ++i)
@@ -330,13 +334,17 @@ Options::Options(int argc, const char** argv)
             u256 input = toU256(argv[++i]);
             if (input > std::numeric_limits<uint64_t>::max())
                 BOOST_WARN("Seed is > u64. Using u64_max instead.");
-            randomTestSeed = static_cast<uint64_t>(min<u256>(std::numeric_limits<uint64_t>::max(), input));
+            randomTestSeefstatic_cast<uint64_t>(min<u256>(std::numeric_limits<uint64_t>::max(), input));
         }
         else if (arg == "--db")
         {
             throwIfNoArgumentFollows();
             setDatabaseKindByName(argv[++i]);
         }
+		else if (arg == "--dismissGasCost")
+		{
+			dismissGasCost = true;
+		}
         else if (seenSeparator)
         {
             cerr << "Unknown option: " + arg << "\n";

@@ -293,7 +293,7 @@ std::tuple<eth::State, ImportTest::ExecOutput, eth::ChangeLog> ImportTest::execu
             out = initialState.execute(_env, *se.get(), _tr, Permanence::Uncommitted);
 
 		if (Options::get().dismissGasCost) {
-			auto gasCost = out.second.cumulativeGasUsed() * gasPrice();
+			auto gasCost = out.second.cumulativeGasUsed() * _tr.gasPrice();
 			initialState.subBalance(_env.author(), gasCost);
 			initialState.addBalance(_tr.sender(), gasCost);
 		}

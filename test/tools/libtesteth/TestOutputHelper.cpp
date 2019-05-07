@@ -63,10 +63,10 @@ void TestOutputHelper::showProgress()
 	if (!test::Options::get().createRandomTest && (m_currTest % m_testsPerProgs == 0 || m_currTest ==  m_maxTests))
 	{
 		int percent = int(m_currTest*100/m_maxTests);
-		std::cout << percent << "%";
+		std::cerr << percent << "%";
 		if (percent != 100)
-			std::cout << "...";
-		std::cout << "\n";
+			std::cerr << "...";
+		std::cerr << "\n";
 	}
 }
 

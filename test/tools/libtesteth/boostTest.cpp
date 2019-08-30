@@ -133,7 +133,7 @@ int main(int argc, const char* argv[])
         framework::master_test_suite().add(ts1);
     }
 
-    std::cout << "Running tests using path: " << test::getTestPath() << std::endl;
+    std::cerr << "Running tests using path: " << test::getTestPath() << std::endl;
     int result = 0;
     auto fakeInit = [](int, char* []) -> boost::unit_test::test_suite* { return nullptr; };
     result = unit_test_main(fakeInit, argc, const_cast<char**>(argv));

@@ -292,6 +292,12 @@ std::tuple<eth::State, ImportTest::ExecOutput, eth::ChangeLog> ImportTest::execu
         else
             out = initialState.execute(_env, *se.get(), _tr, Permanence::Uncommitted);
 
+		if (Options::get().dismissGasCost) {
+			auto gasCost = out.second.cumulativeGasUsed() * _tr.gasPrice();
+			initialState.subBalance(_env.author(), gasCost);
+			initialState.addBalance(_tr.sender(), gasCost);
+		}
+		
         // the changeLog might be broken under --jsontrace, because it uses intialState.execute with Permanence::Committed rather than Permanence::Uncommitted
         eth::ChangeLog changeLog = initialState.changeLog();
         ImportTest::checkBalance(_preState, initialState);

@@ -287,7 +287,7 @@ std::tuple<eth::State, ImportTest::ExecOutput, eth::ChangeLog> ImportTest::execu
             st.setOptions(Options::get().jsontraceOptions);
             out = initialState.execute(_env, *se.get(), _tr, Permanence::Committed, st.onOp());
             cout << st.multilineTrace();
-            cout << "{\"stateRoot\": \"" << initialState.rootHash().hex() << "\"}";
+            cout << "{\"stateRoot\": \"" << initialState.rootHash().hex() << "\"}" << endl;
         }
         else
             out = initialState.execute(_env, *se.get(), _tr, Permanence::Uncommitted);

@@ -26,6 +26,7 @@ FROM alpine:latest AS testeth
 RUN adduser -D testeth
 RUN apk add --no-cache libstdc++
 USER testeth
+COPY --from=lllc /usr/bin/lllc /usr/bin/lllc
 COPY --from=builder /build/test/testeth /usr/bin/
 ENTRYPOINT ["/usr/bin/testeth"]
 
